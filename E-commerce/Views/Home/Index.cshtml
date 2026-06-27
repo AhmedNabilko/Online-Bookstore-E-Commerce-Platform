@@ -1,0 +1,72 @@
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="container-fluid py-5">
+    <!-- Clean Minimal Hero Section -->
+    <div class="row justify-content-center text-center mb-5 pb-4">
+        <div class="col-lg-8">
+            <h1 class="display-3 fw-bold text-dark mb-4 tracking-tight">The Best Products. <br><span class="text-primary">Unbeatable Prices.</span></h1>
+            <p class="lead text-muted mb-5 px-md-5">Discover our curated collection of top-quality items designed to make your life easier and more enjoyable. Simple, fast, and secure.</p>
+            <div class="d-flex justify-content-center gap-3">
+                <a asp-controller="Catalog" asp-action="Index" class="btn btn-primary btn-lg rounded-pill px-5 fw-medium shadow-sm transition-all hover-scale">
+                    <i class="bi bi-shop me-2"></i> Start Shopping
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Clean Features Section -->
+    <div class="row g-4 justify-content-center">
+        <!-- Feature 1 -->
+        <div class="col-md-4 col-lg-3">
+            <div class="card h-100 border-0 bg-light rounded-4 p-4 text-center transition-all hover-shadow">
+                <div class="card-body">
+                    <i class="bi bi-truck text-dark display-5 mb-3"></i>
+                    <h5 class="fw-bold text-dark mb-2">Fast Delivery</h5>
+                    <p class="text-muted small mb-0">Reliable shipping to your doorstep.</p>
+                </div>
+            </div>
+        </div>
+        <!-- Feature 2 -->
+        <div class="col-md-4 col-lg-3">
+            <div class="card h-100 border-0 bg-light rounded-4 p-4 text-center transition-all hover-shadow">
+                <div class="card-body">
+                    <i class="bi bi-shield-check text-dark display-5 mb-3"></i>
+                    <h5 class="fw-bold text-dark mb-2">Secure Payments</h5>
+                    <p class="text-muted small mb-0">100% safe and encrypted checkout.</p>
+                </div>
+            </div>
+        </div>
+        <!-- Feature 3 -->
+        <div class="col-md-4 col-lg-3">
+            <div class="card h-100 border-0 bg-light rounded-4 p-4 text-center transition-all hover-shadow">
+                <div class="card-body">
+                    <i class="bi bi-headset text-dark display-5 mb-3"></i>
+                    <h5 class="fw-bold text-dark mb-2">24/7 Support</h5>
+                    <p class="text-muted small mb-0">We're always here to help you.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .tracking-tight {
+        letter-spacing: -0.02em;
+    }
+    .hover-scale {
+        transition: transform 0.3s ease;
+    }
+    .hover-scale:hover {
+        transform: scale(1.05);
+    }
+    .hover-shadow {
+        transition: all 0.3s ease;
+    }
+    .hover-shadow:hover {
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.08)!important;
+        transform: translateY(-5px);
+        background-color: #fff !important;
+    }
+</style>

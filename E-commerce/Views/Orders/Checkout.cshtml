@@ -1,0 +1,166 @@
+@model E_commerce.Models.ViewModels.CheckoutVM
+
+@{
+    ViewData["Title"] = "Secure Checkout";
+}
+
+<div class="container py-5 min-vh-100">
+    <div class="d-flex align-items-center mb-4">
+        <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3 text-primary">
+            <i class="bi bi-shield-lock fs-3"></i>
+        </div>
+        <h2 class="fw-bolder mb-0 text-dark">Secure Checkout</h2>
+    </div>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-warning alert-dismissible fade show shadow-sm rounded-3 border-warning border-opacity-25" role="alert">
+            <h5 class="alert-heading text-warning fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i>Important Updates!</h5>
+            <div asp-validation-summary="All" class="text-dark mb-0"></div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <form asp-controller="Orders" asp-action="Checkout" method="post" class="needs-validation" novalidate>
+        <div class="row g-5">
+            <div class="col-md-5 col-lg-4 order-md-last">
+                <div class="card border-0 shadow-sm rounded-4 sticky-top" style="top: 2rem;">
+                    <div class="card-header bg-white border-bottom border-light pt-4 pb-3 px-4 d-flex justify-content-between align-items-center">
+                        <h5 class="fw-bold text-dark mb-0">Order Summary</h5>
+                        <span class="badge bg-primary rounded-pill fs-6">@Model.CartItems.Count</span>
+                    </div>
+                    
+                    <ul class="list-group list-group-flush rounded-bottom-4">
+                        @foreach (var item in Model.CartItems)
+                        {
+                            <li class="list-group-item d-flex justify-content-between lh-sm p-4 border-light">
+                                <div>
+                                    <h6 class="my-0 fw-bold text-dark">@item.ProductName</h6>
+                                    <small class="text-muted">Qty: @item.Quantity x @item.UnitPrice.ToString("C")</small>
+                                </div>
+                                <span class="text-dark fw-medium">@item.LineTotal.ToString("C")</span>
+                            </li>
+                        }
+                        
+                        <li class="list-group-item d-flex justify-content-between p-4 bg-light border-light">
+                            <div class="text-muted">
+                                <h6 class="my-0 fw-medium">Subtotal</h6>
+                            </div>
+                            <span class="text-muted fw-medium">@Model.TotalAmount.ToString("C")</span>
+                        </li>
+
+                        <li class="list-group-item d-flex justify-content-between p-4 bg-light border-light">
+                            <div class="text-dark">
+                                <h6 class="my-0 fw-medium">Shipping</h6>
+                                <small class="text-muted">Flat Rate</small>
+                            </div>
+                            <span class="text-dark fw-medium">@Model.FlatRateShipping.ToString("C")</span>
+                        </li>
+
+                        <li class="list-group-item d-flex justify-content-between align-items-center p-4">
+                            <span class="fw-bold fs-5 text-dark">Total (USD)</span>
+                            <span class="text-primary fw-bolder fs-4">@Model.GrandTotal.ToString("C")</span>
+                        </li>
+                        
+                        <li class="list-group-item p-4 border-0">
+                            <button class="w-100 btn btn-primary btn-lg rounded-pill fw-bold shadow-sm transition-all hover-lift" type="submit">
+                                Place Order <i class="bi bi-arrow-right ms-2"></i>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-md-7 col-lg-8">
+                <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5">
+                    <h4 class="mb-4 text-dark fw-bold border-bottom border-light pb-3">Shipping Details</h4>
+                    
+                    <div class="row g-4">
+                        <input type="hidden" asp-for="UserId" />
+                        <div class="col-12">
+                            <label asp-for="ShippingAddress.Street" class="form-label fw-semibold text-muted small">Street Address</label>
+                            <input asp-for="ShippingAddress.Street" class="form-control form-control-lg bg-light border-0 shadow-none" placeholder="1234 Main St" required />
+                            <span asp-validation-for="ShippingAddress.Street" class="text-danger small mt-1"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="ShippingAddress.City" class="form-label fw-semibold text-muted small">City</label>
+                            <input asp-for="ShippingAddress.City" class="form-control form-control-lg bg-light border-0 shadow-none" required />
+                            <span asp-validation-for="ShippingAddress.City" class="text-danger small mt-1"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="ShippingAddress.Zip" class="form-label fw-semibold text-muted small">Postal / Zip Code</label>
+                            <input asp-for="ShippingAddress.Zip" class="form-control form-control-lg bg-light border-0 shadow-none" required />
+                            <span asp-validation-for="ShippingAddress.Zip" class="text-danger small mt-1"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="ShippingAddress.Country" class="form-label fw-semibold text-muted small">Country</label>
+                            <input asp-for="ShippingAddress.Country" class="form-control form-control-lg bg-light border-0 shadow-none" required />
+                            <span asp-validation-for="ShippingAddress.Country" class="text-danger small mt-1"></span>
+                        </div>
+                    </div>
+
+                    <hr class="my-5 border-light">
+                    
+                    <div class="form-check mb-4">
+                        <input type="checkbox" class="form-check-input" id="same-address" checked>
+                        <label class="form-check-label fw-medium text-dark" for="same-address">Shipping address is the same as my billing address</label>
+                    </div>
+
+                    <div class="alert alert-primary bg-primary bg-opacity-10 border-0 rounded-3 d-flex align-items-center mb-0 p-4">
+                        <i class="bi bi-info-circle-fill fs-4 text-primary me-3"></i>
+                        <div>
+                            <h6 class="fw-bold text-primary mb-1">Payment Information</h6>
+                            <p class="mb-0 text-dark small">Payment will be processed securely in the next step after confirming your order details.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<style>
+    .hover-lift {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        .hover-lift:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;
+        }
+    /* Hide the default validation summary bullet points for a cleaner look */
+    .validation-summary-errors ul {
+        list-style-type: none;
+        padding-left: 0;
+        margin-bottom: 0;
+    }
+</style>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        // Example starter JavaScript for disabling form submissions if there are invalid fields
+        (function () {
+            'use strict'
+
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            var forms = document.querySelectorAll('.needs-validation')
+
+            // Loop over them and prevent submission
+            Array.prototype.slice.call(forms)
+                .forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault()
+                            event.stopPropagation()
+                        }
+
+                        form.classList.add('was-validated')
+                    }, false)
+                })
+        })()
+    </script>
+}

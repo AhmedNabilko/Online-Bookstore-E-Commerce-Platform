@@ -1,0 +1,48 @@
+@model IEnumerable<E_commerceEntity.Entity.Category>
+@{
+    int level = (int)ViewBag.Level;
+    int? currentCategoryId = (int?)ViewBag.CurrentCategoryId;
+}
+
+@if (Model != null)
+{
+    foreach (var category in Model)
+    {
+        var isActive = currentCategoryId == category.CategoryId;
+        var hasSubCategories = category.SubCategories != null && category.SubCategories.Any();
+        var collapseId = "collapse-category-" + category.CategoryId;
+
+        <div class="category-item">
+            <div class="d-flex align-items-center justify-content-between mb-1">
+                <a asp-controller="Catalog" asp-action="Index" asp-route-categoryId="@category.CategoryId"
+                   class="nav-link flex-grow-1 px-3 py-2 rounded-3 text-dark transition-all @(isActive ? "active bg-primary text-white shadow-sm" : "hover-bg-light")"
+                   style="padding-left: @(level * 16 + 12)px !important;">
+                    @if (level > 0) 
+                    { 
+                        <i class="bi bi-arrow-return-right me-1 small @(isActive ? "text-white" : "text-muted")"></i> 
+                    }
+                    @category.Name
+                    @if (hasSubCategories) 
+                    { 
+                        <span class="badge @(isActive ? "bg-light text-primary" : "bg-secondary") ms-2" style="font-size: 0.65rem;">@category.SubCategories.Count</span> 
+                    }
+                </a>
+                @if (hasSubCategories)
+                {
+                    <button class="btn btn-sm btn-link text-dark text-decoration-none shadow-none p-2 ms-1 category-toggle-btn" type="button" data-bs-toggle="collapse" data-bs-target="#@collapseId" aria-expanded="false" aria-controls="@collapseId">
+                        <i class="bi bi-chevron-down small"></i>
+                    </button>
+                }
+            </div>
+            
+            @if (hasSubCategories)
+            {
+                <div class="collapse" id="@collapseId">
+                    <div class="mt-1">
+                        @await Component.InvokeAsync("CategoryTree", new { categories = category.SubCategories, currentCategoryId = currentCategoryId, level = level + 1 })
+                    </div>
+                </div>
+            }
+        </div>
+    }
+}

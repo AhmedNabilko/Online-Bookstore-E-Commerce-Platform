@@ -1,0 +1,129 @@
+@model E_commerce.Models.ViewModels.OrderDetailsVM
+
+@{
+    ViewData["Title"] = "Order Details";
+}
+
+<div class="container py-5 min-vh-100">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            
+            <div class="alert alert-success bg-success bg-opacity-10 border-0 rounded-4 mb-4 p-4 d-flex align-items-center shadow-sm">
+                <i class="bi bi-check-circle-fill fs-1 text-success me-4"></i>
+                <div>
+                    <h2 class="fw-bolder text-success mb-1">Order Confirmed!</h2>
+                    <p class="mb-0 text-dark">Thank you for your purchase. We've received your order and are processing it.</p>
+                </div>
+            </div>
+
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+                <div class="card-header bg-white border-bottom border-light py-4 px-4 px-md-5 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold text-dark mb-0">Order Summary</h5>
+                    <span class="badge bg-light text-dark border py-2 px-3 fs-6 rounded-pill">Order #@Model.OrderNumber</span>
+                </div>
+                
+                <div class="card-body p-4 p-md-5">
+                    <div class="row g-5 mb-5">
+                        <div class="col-md-6">
+                            <h6 class="text-uppercase text-muted fw-bold mb-3" style="letter-spacing: 1px; font-size: 0.8rem;">Order Information</h6>
+                            <div class="bg-light rounded-4 p-4 h-100">
+                                <p class="mb-2 d-flex justify-content-between">
+                                    <strong class="text-dark">Date:</strong> 
+                                    <span class="text-muted">@Model.OrderDate.ToLocalTime().ToString("f")</span>
+                                </p>
+                                <p class="mb-2 d-flex justify-content-between">
+                                    <strong class="text-dark">Status:</strong> 
+                                    <span class="badge bg-warning text-dark px-2 py-1 rounded-pill">@Model.Status</span>
+                                </p>
+                                <hr class="border-secondary opacity-10 my-3" />
+                                <p class="mb-0 d-flex justify-content-between align-items-center">
+                                    <strong class="text-dark">Total Amount:</strong> 
+                                    <span class="text-primary fw-bolder fs-5">@Model.TotalAmount.ToString("C")</span>
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <h6 class="text-uppercase text-muted fw-bold mb-3" style="letter-spacing: 1px; font-size: 0.8rem;">Shipping To</h6>
+                            <div class="bg-light rounded-4 p-4 h-100">
+                                <address class="mb-0 text-dark lh-lg">
+                                    <strong class="d-block mb-1 fs-6">@Model.ShippingAddress.Street</strong>
+                                    @Model.ShippingAddress.City, @Model.ShippingAddress.Zip<br>
+                                    @Model.ShippingAddress.Country
+                                </address>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h6 class="text-uppercase text-muted fw-bold mb-3" style="letter-spacing: 1px; font-size: 0.8rem;">Items Purchased</h6>
+                    <div class="table-responsive">
+                        <table class="table table-borderless align-middle mb-0">
+                            <thead class="bg-light rounded-top-3">
+                                <tr>
+                                    <th class="ps-4 py-3 text-muted fw-semibold rounded-start-3" style="font-size: 0.85rem;">Product</th>
+                                    <th class="text-center py-3 text-muted fw-semibold" style="font-size: 0.85rem;">Quantity</th>
+                                    <th class="text-end py-3 text-muted fw-semibold" style="font-size: 0.85rem;">Unit Price</th>
+                                    <th class="text-end pe-4 py-3 text-muted fw-semibold rounded-end-3" style="font-size: 0.85rem;">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Items)
+                                {
+                                    <tr class="border-bottom border-light">
+                                        <td class="ps-4 py-4">
+                                            <div class="d-flex align-items-center">
+                                                <div class="bg-light rounded-3 d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                                                    <i class="bi bi-box-seam text-primary opacity-50 fs-4"></i>
+                                                </div>
+                                                <div>
+                                                    <h6 class="mb-0 fw-bold text-dark">@item.ProductName</h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="text-center py-4 fw-medium">@item.Quantity</td>
+                                        <td class="text-end py-4 text-muted">@item.UnitPrice.ToString("C")</td>
+                                        <td class="text-end pe-4 py-4 fw-bold text-dark">@item.LineTotal.ToString("C")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="3" class="text-end py-4 pe-4 text-muted fw-semibold">Grand Total</td>
+                                    <td class="text-end py-4 pe-4"><strong class="text-primary fs-4">@Model.TotalAmount.ToString("C")</strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="d-flex flex-column flex-md-row justify-content-end gap-3 mt-4">
+                <button onclick="window.print()" class="btn btn-outline-secondary btn-lg rounded-pill px-4 transition-all hover-lift">
+                    <i class="bi bi-printer me-2"></i>Print Receipt
+                </button>
+                <a asp-controller="Catalog" asp-action="Index" class="btn btn-primary btn-lg rounded-pill px-5 shadow-sm transition-all hover-lift">
+                    Continue Shopping <i class="bi bi-arrow-right ms-2"></i>
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    .hover-lift {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .hover-lift:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+    }
+    
+    /* Print Styles to hide buttons when printing */
+    @@media print {
+        body { background-color: white !important; }
+        .btn, .alert { display: none !important; }
+        .card { box-shadow: none !important; border: 1px solid #dee2e6 !important; }
+    }
+</style>

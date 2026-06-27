@@ -1,0 +1,106 @@
+
+@model IEnumerable<E_commerce.Models.ViewModels.AdminOrderListVM>
+@{
+    ViewData["Title"] = "Order Management";
+    int pageNumber = (int)ViewData["PageNumber"];
+    int totalCount = (int)ViewData["TotalCount"];
+    int pageSize = (int)ViewData["PageSize"];
+    int totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+}
+
+<div class="card shadow-sm border-0 rounded-4 mt-4">
+    <div class="card-body p-4">
+        
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="fw-bold text-dark mb-0">Order Management</h3>
+            <span class="badge bg-secondary rounded-pill px-3 py-2 fs-6">Total Orders: @totalCount</span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle border-bottom">
+                <thead class="table-light text-uppercase text-muted" style="font-size: 0.85rem; letter-spacing: 0.5px;">
+                    <tr>
+                        <th class="ps-3">Order</th>
+                        <th>Customer</th>
+                        <th>Date</th>
+                        <th class="text-end">Total</th>
+                        <th class="text-center" style="width: 200px;">Status</th>
+                        <th class="text-center pe-3">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="border-top-0">
+                    @if (Model.Any())
+                    {
+                        @foreach (var obj in Model)
+                        {
+                            <tr>
+                                <td class="ps-3">
+                                    <span class="fw-bold text-primary">#@obj.OrderNumber</span><br />
+                                    <small class="text-muted">ID: @obj.OrderId</small>
+                                </td>
+                                <td>
+                                    <span class="fw-semibold">@obj.CustomerName</span><br />
+                                    <small class="text-muted">@obj.CustomerEmail</small>
+                                </td>
+                                <td>@obj.OrderDate.ToString("MMM dd, yyyy")<br /><small class="text-muted">@obj.OrderDate.ToString("HH:mm")</small></td>
+                                <td class="text-end fw-bold">@obj.TotalAmount.ToString("C")</td>
+                                
+                                <td class="text-center">
+                                    @{
+                                        var (bgClass, textClass, iconClass) = obj.Status switch
+                                        {
+                                            E_commerceEntity.Entity.OrderStatus.Pending => ("bg-warning bg-opacity-10", "text-warning", "bi-hourglass-split"),
+                                            E_commerceEntity.Entity.OrderStatus.Processing => ("bg-info bg-opacity-10", "text-info", "bi-gear-fill"),
+                                            E_commerceEntity.Entity.OrderStatus.Shipping => ("bg-primary bg-opacity-10", "text-primary", "bi-truck"),
+                                            E_commerceEntity.Entity.OrderStatus.Delivered => ("bg-success bg-opacity-10", "text-success", "bi-check-circle-fill"),
+                                            E_commerceEntity.Entity.OrderStatus.Cancelled => ("bg-danger bg-opacity-10", "text-danger", "bi-x-circle-fill"),
+                                            _ => ("bg-secondary bg-opacity-10", "text-secondary", "bi-circle-fill")
+                                        };
+                                    }
+                                    <span class="badge @bgClass @textClass rounded-pill px-3 py-2 border-0" style="font-size: 0.85rem;">
+                                        <i class="bi @iconClass me-1"></i> @obj.Status.ToString()
+                                    </span>
+                                </td>
+                                
+                                <td class="text-center pe-3">
+                                    <a asp-action="Details" asp-route-id="@obj.OrderId" class="btn btn-outline-dark btn-sm rounded-pill px-3">
+                                        <i class="bi bi-eye me-1"></i> View
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                                No orders found.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (totalPages > 1)
+        {
+            <nav aria-label="Order pagination" class="mt-4">
+                <ul class="pagination justify-content-center mb-0">
+                    <li class="page-item @(pageNumber == 1 ? "disabled" : "")">
+                        <a class="page-link shadow-none" asp-action="Index" asp-route-pageNumber="@(pageNumber - 1)">Previous</a>
+                    </li>
+                    @for (int i = 1; i <= totalPages; i++)
+                    {
+                        <li class="page-item @(i == pageNumber ? "active" : "")">
+                            <a class="page-link shadow-none" asp-action="Index" asp-route-pageNumber="@i">@i</a>
+                        </li>
+                    }
+                    <li class="page-item @(pageNumber == totalPages ? "disabled" : "")">
+                        <a class="page-link shadow-none" asp-action="Index" asp-route-pageNumber="@(pageNumber + 1)">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        }
+    </div>
+</div>

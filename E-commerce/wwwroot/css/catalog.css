@@ -1,0 +1,94 @@
+
+.search-input:focus,
+.btn-clear-search:focus,
+.btn-clear-search:active {
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+
+.product-card {
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    background-color: #ffffff;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08) !important;
+}
+
+
+.transition-all {
+    transition: all 0.2s ease-in-out;
+}
+
+.hover-bg-light:hover {
+    background-color: #f8f9fa;
+    color: #0d6efd !important;
+}
+
+.hover-text-danger:hover {
+    color: #dc3545 !important;
+}
+
+.hover-text-primary {
+    transition: color 0.2s ease-in-out;
+}
+
+.hover-text-primary:hover {
+    color: #0d6efd !important;
+}
+
+
+.line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+
+.btn-view-details {
+    transition: all 0.2s ease;
+    background-color: #f8f9fa;
+}
+
+.product-card:hover .btn-view-details {
+    background-color: #0d6efd;
+    color: white !important;
+    transform: translateX(3px);
+}
+
+
+.pagination .page-link {
+    color: #495057;
+    margin: 0 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #0d6efd;
+    color: white;
+}
+
+
+.qty-input:focus {
+    background-color: #f8f9fa;
+    outline: none;
+}
+
+.qty-input::-webkit-outer-spin-button,
+.qty-input::-webkit-inner-spin-button {
+    opacity: 1;
+    height: 100%;
+}
+
+
+.btn-cart:not(:disabled):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(13, 110, 253, 0.2) !important;
+}

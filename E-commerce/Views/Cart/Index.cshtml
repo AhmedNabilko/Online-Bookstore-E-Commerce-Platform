@@ -1,0 +1,172 @@
+@model CartVM
+
+@{
+    ViewData["Title"] = "Shopping Cart";
+}
+
+<link rel="stylesheet" href="~/css/cart.css" asp-append-version="true" />
+
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="d-flex align-items-center mb-4">
+                <i class="bi bi-cart3 fs-2 text-primary me-3"></i>
+                <h2 class="fw-bold mb-0">Shopping Cart</h2>
+            </div>
+
+            @if (Model.CartItems == null || !Model.CartItems.Any())
+            {
+                @* Empty State *@
+                <div class="card border-0 shadow-sm rounded-4 text-center py-5">
+                    <div class="card-body py-5">
+                        <i class="bi bi-cart-x text-muted opacity-25 display-1 mb-4 d-block"></i>
+                        <h3 class="fw-bold text-dark mb-3">Your cart is empty</h3>
+                        <p class="text-muted mb-4">Looks like you haven't added anything to your cart yet.</p>
+                        <a asp-controller="Catalog" asp-action="Index" class="btn btn-primary rounded-pill px-5 py-2 fw-semibold">
+                            <i class="bi bi-arrow-left me-2"></i>Continue Shopping
+                        </a>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="row g-4">
+                    @* Cart Items Table *@
+                    <div class="col-lg-8">
+                        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                            <div class="card-header bg-white border-0 pt-4 pb-3 px-4">
+                                <h5 class="fw-bold mb-0">Cart Items (@Model.CartItems.Count())</h5>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle mb-0">
+                                        <thead class="bg-light">
+                                            <tr>
+                                                <th class="border-0 ps-4 py-3 text-uppercase text-muted fw-semibold" style="font-size: 0.75rem; letter-spacing: 0.5px;">Product</th>
+                                                <th class="border-0 py-3 text-uppercase text-muted fw-semibold text-center" style="font-size: 0.75rem; letter-spacing: 0.5px;">Price</th>
+                                                <th class="border-0 py-3 text-uppercase text-muted fw-semibold text-center" style="font-size: 0.75rem; letter-spacing: 0.5px;">Quantity</th>
+                                                <th class="border-0 py-3 text-uppercase text-muted fw-semibold text-center" style="font-size: 0.75rem; letter-spacing: 0.5px;">Total</th>
+                                                <th class="border-0 pe-4 py-3 text-uppercase text-muted fw-semibold text-center" style="font-size: 0.75rem; letter-spacing: 0.5px;"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in Model.CartItems)
+                                            {
+                                                <tr>
+                                                    <td class="ps-4 py-4">
+                                                        <div class="d-flex align-items-center">
+                                                            
+                                                            <div>
+                                                                <h6 class="fw-bold mb-1">@item.ProductName</h6>
+                                                                @if (!string.IsNullOrEmpty(item.StockWarning))
+                                                                {
+                                                                    <small class="@(item.IsAvailable ? "text-warning" : "text-danger")">
+                                                                        <i class="bi bi-exclamation-triangle-fill me-1"></i>@item.StockWarning
+                                                                    </small>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="py-4 text-center">
+                                                        <span class="fw-semibold">$@item.Price.ToString("F2")</span>
+                                                    </td>
+                                                    <td class="py-4 text-center">
+                                                        <div class="d-flex align-items-center justify-content-center gap-2">
+                                                            @* Decrease Quantity Button *@
+                                                            <form asp-action="Update" method="post" class="d-inline">
+                                                                <input type="hidden" name="cartItemId" value="@item.Id" />
+                                                                <input type="hidden" name="count" value="@(item.Quantity - 1)" />
+                                                                <button type="submit" class="btn btn-outline-secondary btn-sm rounded-circle p-1" 
+                                                                        style="width: 28px; height: 28px;" title="Decrease quantity">
+                                                                    <i class="bi bi-dash"></i>
+                                                                </button>
+                                                            </form>
+                                                            
+                                                            <span class="fw-bold px-2" style="min-width: 30px; text-align: center;">@item.Quantity</span>
+                                                            
+                                                            @* Increase Quantity Button *@
+                                                            <form asp-action="Update" method="post" class="d-inline">
+                                                                <input type="hidden" name="cartItemId" value="@item.Id" />
+                                                                <input type="hidden" name="count" value="@(item.Quantity + 1)" />
+                                                                <button type="submit" 
+                                                                        class="btn @(item.IsAtMaxStock ? "btn-outline-secondary disabled" : "btn-outline-secondary") btn-sm rounded-circle p-1" 
+                                                                        style="width: 28px; height: 28px;" 
+                                                                        title="@(item.IsAtMaxStock ? $"Maximum available: {item.AvailableStock}" : "Increase quantity")"
+                                                                        @(item.IsAtMaxStock ? "disabled" : "")>
+                                                                    <i class="bi bi-plus"></i>
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                        <div class="mt-1">
+                                                            @if (item.AvailableStock > 0)
+                                                            {
+                                                                <small class="@(item.IsAtMaxStock ? "text-danger fw-semibold" : "text-muted")">
+                                                                    @item.Quantity of @item.AvailableStock in stock
+                                                                </small>
+                                                            }
+                                                            else
+                                                            {
+                                                                <small class="text-danger fw-semibold">
+                                                                    <i class="bi bi-exclamation-circle me-1"></i>Out of stock
+                                                                </small>
+                                                            }
+                                                        </div>
+                                                    </td>
+                                                    <td class="py-4 text-center">
+                                                        <span class="fw-bold text-primary">$@item.LineTotal.ToString("F2")</span>
+                                                    </td>
+                                                    <td class="pe-4 py-4 text-center">
+                                                        @* Remove Item Button *@
+                                                        <form asp-action="Remove" method="post" class="d-inline">
+                                                            <input type="hidden" name="cartItemId" value="@item.Id" />
+                                                            <button type="submit" class="btn btn-outline-danger btn-sm rounded-circle p-2" 
+                                                                    style="width: 36px; height: 36px;" title="Remove item">
+                                                                <i class="bi bi-trash3"></i>
+                                                            </button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @* Order Summary *@
+                    <div class="col-lg-4">
+                        <div class="card border-0 shadow-sm rounded-4 sticky-top" style="top: 2rem;">
+                            <div class="card-header bg-white border-0 pt-4 pb-3 px-4">
+                                <h5 class="fw-bold mb-0">Order Summary</h5>
+                            </div>
+                            <div class="card-body px-4 pb-4">
+                                <div class="d-flex justify-content-between mb-3">
+                                    <span class="text-muted">Subtotal</span>
+                                    <span class="fw-semibold">$@Model.OrderTotal.ToString("F2")</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-3">
+                                    <span class="text-muted">Shipping</span>
+                                    <span class="text-success fw-semibold">Free</span>
+                                </div>
+                                <hr class="my-4" />
+                                <div class="d-flex justify-content-between mb-4">
+                                    <span class="fw-bold fs-5">Total</span>
+                                    <span class="fw-bold fs-5 text-primary">$@Model.OrderTotal.ToString("F2")</span>
+                                </div>
+
+                                <a  asp-controller="Orders" asp-action="Checkout"  class="btn btn-primary w-100 py-3 rounded-3 fw-semibold mb-3 @(Model.CartItems.Any(i => !i.IsAvailable) ? "disabled" : "")">
+                                    <i class="bi bi-credit-card me-2"></i>Proceed to Checkout
+                                </a>
+                                
+                                <a asp-controller="Catalog" asp-action="Index" class="btn btn-outline-secondary w-100 py-2 rounded-3">
+                                    <i class="bi bi-arrow-left me-2"></i>Continue Shopping
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,20 @@
+/* Cart Page Styles */
+
+.table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.btn-outline-secondary:hover {
+    background-color: var(--bs-secondary);
+    color: white;
+}
+
+/* Animation for quantity buttons */
+.btn:active {
+    transform: scale(0.95);
+}
+
+/* Stock warning styling */
+.stock-warning {
+    font-size: 0.85rem;
+}
